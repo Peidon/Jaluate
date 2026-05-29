@@ -123,6 +123,10 @@ public class Value<T> {
         return fields;
     }
 
+    public Integer getInt() {
+        return (Integer) value;
+    }
+
     public Object[] getArray() {
         if (value != null && value.getClass().isArray()) {
             int length = Array.getLength(value);

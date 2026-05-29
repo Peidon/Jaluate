@@ -1,6 +1,8 @@
 package org.xpd.operator;
 
+import org.xpd.errors.FunctionNotExistsError;
 import org.xpd.type.PrimitiveType;
+import org.xpd.type.Value;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -8,6 +10,12 @@ import java.util.function.Function;
 
 
 public class Factory {
+
+    private final Map<String, Operator<Object>> operators;
+
+    public Factory(Map<String, Operator<Object>> operators) {
+        this.operators = operators;
+    }
 
     public Operator<?> createOperator(Symbol symbol, Map<String, Object> params) {
         return switch (symbol) {
@@ -29,8 +37,8 @@ public class Factory {
             case MODULUS -> this.makeModulus();
             case NEGATE -> this.makeNegate();
             case INVERT -> this.makeNot();
-            case INDEX -> null;
-            case FUNCTIONAL -> null;
+            case INDEX -> this.makeIndex();
+            case FUNCTIONAL -> this.makeFunction(operators);
             case ACCESS -> null;
         };
     }
@@ -123,5 +131,28 @@ public class Factory {
     Operator<Number> makeModulus() {
         BiFunction<Number, Number, Number> fn = (a, b) -> a.doubleValue() % b.doubleValue();
         return new FunctionalOperator<>(fn);
+    }
+
+    Operator<Integer> makeIndex() {
+        Function<Object, Integer> fn =  a -> {
+            var v = new Value<>(a);
+            return v.getInt();
+        };
+        return new FunctionalOperator<>(fn);
+    }
+
+    Operator<Object> makeFunction(Map<String, Operator<Object>> fns) {
+        BiFunction<String, Object[], Object> fn = (fnName, args) -> {
+            Operator<Object> f = fns.get(fnName);
+            if (f == null) {
+                throw new FunctionNotExistsError(fnName);
+            }
+            return f.execute(args);
+        };
+        return new FunctionalOperator<>(fn);
+    }
+
+    Operator<Object> makeAccess(String fnName, Object... args) {
+        return null;
     }
 }
