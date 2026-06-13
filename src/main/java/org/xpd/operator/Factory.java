@@ -3,7 +3,6 @@ package org.xpd.operator;
 import org.xpd.errors.FunctionNotExistsError;
 import org.xpd.type.PrimitiveType;
 import org.xpd.type.Value;
-
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -38,8 +37,8 @@ public class Factory {
             case NEGATE -> this.makeNegate();
             case INVERT -> this.makeNot();
             case INDEX -> this.makeIndex();
-            case FUNCTIONAL -> this.makeFunction(operators);
-            case ACCESS -> null;
+            case FUNCTIONAL -> this.makeFunction();
+            case ACCESS -> this.makeAccess();
         };
     }
 
@@ -133,6 +132,7 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
+    // index : [ expr ]
     Operator<Integer> makeIndex() {
         Function<Object, Integer> fn =  a -> {
             var v = new Value<>(a);
@@ -141,9 +141,24 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
-    Operator<Object> makeFunction(Map<String, Operator<Object>> fns) {
+    // primary_expr [ index ]
+    Operator<Object> makeArrayIndex() {
+        BiFunction<Object[], Integer, Object> fn = (arr, idx) -> arr[idx];
+        return new FunctionalOperator<>(fn);
+    }
+
+    // [expr, ... expr]
+    Operator<Object[]> makeArrayConst() {
+        Function<Object, Object[]> fn = (a) -> {
+            var v = new Value<>(a);
+            return v.getArray();
+        };
+        return new FunctionalOperator<>(fn);
+    }
+
+    Operator<Object> makeFunction() {
         BiFunction<String, Object[], Object> fn = (fnName, args) -> {
-            Operator<Object> f = fns.get(fnName);
+            Operator<Object> f = operators.get(fnName);
             if (f == null) {
                 throw new FunctionNotExistsError(fnName);
             }
@@ -152,7 +167,8 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
-    Operator<Object> makeAccess(String fnName, Object... args) {
-        return null;
+    Operator<Object> makeAccess() {
+        BiFunction<String, Map<String, Object>, Object> fn = (attrName, struct) -> struct.get(attrName);
+        return new FunctionalOperator<>(fn);
     }
 }

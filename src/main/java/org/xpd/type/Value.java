@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class Value<T> {
             return;
         }
 
-        if (valueClass.equals(java.sql.Date.class) ||
+        if (valueClass.equals(Date.class) ||
                 valueClass.equals(Time.class) ||
                 valueClass.equals(Timestamp.class)) {
             this.type = ValueType.Time;
@@ -64,9 +65,10 @@ public class Value<T> {
             return;
         }
 
-        if (isStringKeyMap(value)) {
+        var castMap = castToMap(value);
+        if (!castMap.isEmpty()) {
             this.type = ValueType.Struct;
-            this.fields = (Map<String, Object>) value;
+            this.fields = castToMap(value);
             return;
         }
 
@@ -83,18 +85,19 @@ public class Value<T> {
 
     }
 
-    private boolean isStringKeyMap(Object obj) {
-        if (!(obj instanceof Map<?, ?> map)) {
-            return false;
+    private Map<String, Object> castToMap(Object obj) {
+        Map<String, Object> result = new HashMap<>();
+
+        if  (! (obj instanceof Map<?, ?> rawMap)) {
+            return result;
         }
 
-        for (Object key : map.keySet()) {
-            if (!(key instanceof String)) {
-                return false;
+        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+            if (entry.getKey() instanceof String key) {
+                result.put(key, entry.getValue());
             }
         }
-
-        return true;
+        return result;
     }
 
     private Map<String, Object> buildStruct(Object obj) {
