@@ -10,37 +10,37 @@ import java.util.function.Function;
 
 public class Factory {
 
-    private final Map<String, Operator<Object>> operators;
+//    private final Map<String, Operator<Object>> operators;
 
-    public Factory(Map<String, Operator<Object>> operators) {
-        this.operators = operators;
-    }
+//    public Factory(Map<String, Operator<Object>> operators) {
+//        this.operators = operators;
+//    }
 
-    public Operator<?> createOperator(Symbol symbol, Map<String, Object> params) {
-        return switch (symbol) {
-            case NOOP -> null;
-            case VALUE -> this.makeValue(params);
-            case LITERAL -> this.makeLiteral();
-            case EQ -> this.makeEquals();
-            case NEQ -> this.makeNotEquals();
-            case GT -> this.makeGreaterThan();
-            case LT -> this.makeLessThan();
-            case GTE -> this.makeGreaterThanOrEqualTo();
-            case LTE -> this.makeLessThanOrEqualTo();
-            case AND -> this.makeAnd();
-            case OR -> this.makeOr();
-            case PLUS -> this.makePlus();
-            case MINUS -> this.makeMinus();
-            case MULTIPLY -> this.makeMultiply();
-            case DIVIDE -> this.makeDivide();
-            case MODULUS -> this.makeModulus();
-            case NEGATE -> this.makeNegate();
-            case INVERT -> this.makeNot();
-            case INDEX -> this.makeIndex();
-            case FUNCTIONAL -> this.makeFunction();
-            case ACCESS -> this.makeAccess();
-        };
-    }
+//    public Operator<?> createOperator(Symbol symbol, Map<String, Object> params) {
+//        return switch (symbol) {
+//            case NOOP -> null;
+//            case VALUE -> this.makeValue(params);
+//            case LITERAL -> this.makeLiteral();
+//            case EQ -> this.makeEquals();
+//            case NEQ -> this.makeNotEquals();
+//            case GT -> this.makeGreaterThan();
+//            case LT -> this.makeLessThan();
+//            case GTE -> this.makeGreaterThanOrEqualTo();
+//            case LTE -> this.makeLessThanOrEqualTo();
+//            case AND -> this.makeAnd();
+//            case OR -> this.makeOr();
+//            case PLUS -> this.makePlus();
+//            case MINUS -> this.makeMinus();
+//            case MULTIPLY -> this.makeMultiply();
+//            case DIVIDE -> this.makeDivide();
+//            case MODULUS -> this.makeModulus();
+//            case NEGATE -> this.makeNegate();
+//            case INVERT -> this.makeNot();
+//            case INDEX -> this.makeIndex();
+//            case FUNCTIONAL -> this.makeFunction();
+//            case ACCESS -> this.makeAccess();
+//        };
+//    }
 
     Operator<Object> makeValue(Map<String, Object> params) {
         Function<String, Object> fn = params::get;
@@ -156,7 +156,7 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
-    Operator<Object> makeFunction() {
+    Operator<Object> makeFunction(Map<String, Operator<Object>> operators) {
         BiFunction<String, Object[], Object> fn = (fnName, args) -> {
             Operator<Object> f = operators.get(fnName);
             if (f == null) {

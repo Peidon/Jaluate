@@ -7,11 +7,12 @@ import java.util.ArrayList;
 
 public class EvalStage<T> {
     private final Symbol symbol;
+    private final Operator<T> operator;
     private ArrayList<EvalStage<T>> dependencies;
-    private Operator<T> operator;
 
-    public EvalStage(Symbol symbol) {
+    public EvalStage(Symbol symbol, Operator<T> operator) {
         this.symbol = symbol;
+        this.operator = operator;
     }
 
     public EvalStage(Symbol symbol, Operator<T> operator, ArrayList<EvalStage<T>> dependencies) {
@@ -30,5 +31,9 @@ public class EvalStage<T> {
 
     public ArrayList<EvalStage<T>> getDependencies() {
         return dependencies;
+    }
+
+    public void setDependencies(ArrayList<EvalStage<T>> dependencies) {
+        this.dependencies = dependencies;
     }
 }
