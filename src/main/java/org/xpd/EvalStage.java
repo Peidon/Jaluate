@@ -5,23 +5,23 @@ import org.xpd.operator.Symbol;
 
 import java.util.ArrayList;
 
-public class EvalStage<T> {
+public class EvalStage {
     private final Symbol symbol;
-    private final Operator<T> operator;
-    private ArrayList<EvalStage<T>> dependencies;
+    private final Operator<?> operator;
+    private ArrayList<EvalStage> dependencies;
 
-    public EvalStage(Symbol symbol, Operator<T> operator) {
+    public EvalStage(Symbol symbol, Operator<?> operator) {
         this.symbol = symbol;
         this.operator = operator;
     }
 
-    public EvalStage(Symbol symbol, Operator<T> operator, ArrayList<EvalStage<T>> dependencies) {
+    public EvalStage(Symbol symbol, Operator<?> operator, ArrayList<EvalStage> dependencies) {
         this.symbol = symbol;
         this.operator = operator;
         this.dependencies = dependencies;
     }
 
-    public Operator<T> getOperator() {
+    public Operator<?> getOperator() {
         return operator;
     }
 
@@ -29,11 +29,11 @@ public class EvalStage<T> {
         return symbol;
     }
 
-    public ArrayList<EvalStage<T>> getDependencies() {
+    public ArrayList<EvalStage> getDependencies() {
         return dependencies;
     }
 
-    public void setDependencies(ArrayList<EvalStage<T>> dependencies) {
+    public void setDependencies(ArrayList<EvalStage> dependencies) {
         this.dependencies = dependencies;
     }
 }
