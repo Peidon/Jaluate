@@ -6,17 +6,18 @@ import org.xpd.type.Value;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 public class Factory {
 
-    public Operator<Object> makeValue(Map<String, Object> params) {
-        Function<String, Object> fn = params::get;
+    public Operator<Object> makeValue(Map<String, Object> params, String key) {
+        Supplier<Object> fn = ()-> params.get(key);
         return new FunctionalOperator<>(fn);
     }
 
-    public Operator<Object> makeLiteral() {
-        BiFunction<String, PrimitiveType, Object> fn = (literal, primitiveType) -> switch (primitiveType) {
+    public Operator<Object> makeLiteral(String literal, PrimitiveType type) {
+        Supplier<Object> fn = () -> switch (type) {
             case None -> null;
             case Boolean -> Boolean.parseBoolean(literal);
             case Integer -> Integer.parseInt(literal);
@@ -27,31 +28,32 @@ public class Factory {
     }
 
     public Operator<Boolean> makeEquals() {
-        return new FunctionalOperator<>(Object::equals);
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) == 0;
+        return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeNotEquals() {
-        BiFunction<Number, Number, Boolean> fn = (a, b) -> !a.equals(b);
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) != 0;
         return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeGreaterThan() {
-        BiFunction<Number, Number, Boolean> fn = (a, b) -> a.doubleValue() > b.doubleValue();
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) > 0;
         return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeGreaterThanOrEqualTo() {
-        BiFunction<Number, Number, Boolean> fn = (a, b) -> a.doubleValue() >= b.doubleValue();
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) >= 0;
         return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeLessThan() {
-        BiFunction<Number, Number, Boolean> fn = (a, b) -> a.doubleValue() < b.doubleValue();
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) < 0;
         return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeLessThanOrEqualTo() {
-        BiFunction<Number, Number, Boolean> fn = (a, b) -> a.doubleValue() <= b.doubleValue();
+        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) <= 0;
         return new FunctionalOperator<>(fn);
     }
 
@@ -116,16 +118,13 @@ public class Factory {
     }
 
     // [expr, ... expr]
-    public Operator<Object[]> makeArrayConst() {
-        Function<Object, Object[]> fn = (a) -> {
-            var v = new Value<>(a);
-            return v.getArray();
-        };
+    public Operator<Object[]> makeArrayConst(Object[] arr) {
+        Supplier<Object[]> fn = () -> arr;
         return new FunctionalOperator<>(fn);
     }
 
-    public Operator<Object> makeFunction(Map<String, Operator<Object>> operators) {
-        BiFunction<String, Object[], Object> fn = (fnName, args) -> {
+    public Operator<Object> makeFunction(String fnName, Map<String, Operator<Object>> operators) {
+        Function<Object[], Object> fn = (args) -> {
             Operator<Object> f = operators.get(fnName);
             if (f == null) {
                 throw new FunctionNotExistsError(fnName);
@@ -135,8 +134,8 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
-    public Operator<Object> makeAccess() {
-        BiFunction<String, Map<String, Object>, Object> fn = (attrName, struct) -> struct.get(attrName);
+    public Operator<Object> makeAccess(String attrName) {
+        Function<Map<String, Object>, Object> fn = (struct) -> struct.get(attrName);
         return new FunctionalOperator<>(fn);
     }
 }

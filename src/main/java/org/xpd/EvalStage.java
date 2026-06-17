@@ -25,15 +25,11 @@ public class EvalStage {
         return operator;
     }
 
-    public Symbol getSymbol() {
-        return symbol;
+    public String getSymbol() {
+        return symbol.getSymbol();
     }
 
     public ArrayList<EvalStage> getDependencies() {
         return dependencies;
-    }
-
-    public void setDependencies(ArrayList<EvalStage> dependencies) {
-        this.dependencies = dependencies;
     }
 }
