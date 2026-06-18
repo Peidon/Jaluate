@@ -6,13 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class EvaluableExpressionTest {
     @Test
     public void evaluate() {
-        EvaluableExpression expr = new EvaluableExpression("1+2");
+        EvaluableExpression expr = new EvaluableExpression("null");
         var result = expr.Eval();
-        assertEquals(3.0, result);
+        assertNull(result);
 
         expr = new EvaluableExpression("a+b+c");
         Map<String, Object> params = new HashMap<>();
