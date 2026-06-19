@@ -9,17 +9,12 @@ import org.xpd.errors.VisitParserTreeError;
 import org.xpd.operator.Factory;
 import org.xpd.operator.Operator;
 import org.xpd.operator.Symbol;
+import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
-/**
- *
- *
- */
+
 public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
     private final ValuateParser.PlanContext plan;
     private Map<String, Operator<Object>>  functions;
@@ -181,7 +176,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
             if (identify != null && ctx.DOT() != null) {
                 // access operator
                 return new EvalStage(Symbol.ACCESS, operatorFactory.makeAccess(identify.getText()),
-                        (ArrayList<EvalStage>) Collections.singletonList(primaryStage));
+                        new ArrayList<>(Collections.singletonList(primaryStage)));
             }
 
             var idx = ctx.index();
@@ -189,7 +184,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
                 // array index operator
                 var idxStage = idx.accept(this);
                 return new EvalStage(Symbol.INDEX, operatorFactory.makeArrayIndex(),
-                        (ArrayList<EvalStage>) Arrays.asList(primaryStage, idxStage));
+                        new ArrayList<>(Arrays.asList(primaryStage, idxStage)));
             }
         }
 
@@ -200,7 +195,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
             String funcName = identify.getText();
             var argStage = args.accept(this);
             return new EvalStage(Symbol.FUNCTIONAL, operatorFactory.makeFunction(funcName, functions),
-                    (ArrayList<EvalStage>) Collections.singletonList(argStage));
+                    new ArrayList<>(Collections.singletonList(argStage)));
         }
         throw new VisitParserTreeError("primary expression is null");
     }
@@ -300,17 +295,41 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         if (lit != null) {
             return new EvalStage(Symbol.LITERAL, operatorFactory.makeLiteral(lit.getText(), PrimitiveType.Number));
         }
+        var arr = ctx.arr();
+        if (arr != null) {
+            return arr.accept(this);
+        }
+        var obj = ctx.obj();
+        if (obj != null) {
+            return obj.accept(this);
+        }
         throw new VisitParserTreeError("basic literal is null");
     }
 
     @Override
     public EvalStage visitObj(ValuateParser.ObjContext ctx) {
-        return this.visit(ctx);
+        Map<String, Object> attrs = new HashMap<>();
+        for (ValuateParser.PairContext pair: ctx.pair()) {
+            var stage = this.visit(pair);
+            var obj = evalStage(stage);
+            if (obj instanceof Pair kv) {
+                attrs.put(kv.getKey(), kv.getValue());
+            } else {
+                throw new VisitParserTreeError("parse pair failed. ");
+            }
+        }
+        return new EvalStage(Symbol.LITERAL, operatorFactory.makeMap(attrs));
     }
 
     @Override
     public EvalStage visitPair(ValuateParser.PairContext ctx) {
-        return this.visit(ctx);
+        var key = ctx.STRING();
+        var lit = ctx.basicLit();
+        if (key == null || lit == null) {
+            throw new VisitParserTreeError("pair is null");
+        }
+        return new EvalStage(Symbol.LITERAL, operatorFactory.makePair(key.getText()),
+                new ArrayList<>(Collections.singletonList(lit.accept(this))));
     }
 
     @Override
@@ -334,7 +353,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
             throw new VisitParserTreeError("index is null");
         }
         var stage = idx.accept(this);
-        return new EvalStage(Symbol.INDEX, operatorFactory.makeIndex(), (ArrayList<EvalStage>) Collections.singletonList(stage));
+        return new EvalStage(Symbol.INDEX, operatorFactory.makeIndex(), new ArrayList<>(Collections.singletonList(stage)));
     }
 
     @Override

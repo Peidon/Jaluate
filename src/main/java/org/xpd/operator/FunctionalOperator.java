@@ -2,7 +2,6 @@ package org.xpd.operator;
 
 import org.xpd.errors.ArgumentsLengthError;
 
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -66,41 +65,5 @@ public class FunctionalOperator<T, U, V, W, R> implements Operator<R> {
             case 4 -> quadFunction.apply((T)args[0], (U)args[1], (V)args[2], (W)args[3]);
             default -> throw new ArgumentsLengthError(args.length);
         };
-    }
-
-
-    public R apply() {
-        if (argumentsLength != 0) {
-            throw new ArgumentsLengthError(this.argumentsLength, 0);
-        }
-        return supplier.get();
-    }
-
-    public R apply(T a) {
-        if (argumentsLength != 1) {
-            throw new ArgumentsLengthError(this.argumentsLength, 1);
-        }
-        return unaryFunction.apply(a);
-    }
-
-    public R apply(T a, U b) {
-        if (argumentsLength != 2) {
-            throw new ArgumentsLengthError(this.argumentsLength, 2);
-        }
-        return biFunction.apply(a, b);
-    }
-
-    public R apply(T a, U b, V c) {
-        if (argumentsLength != 3) {
-            throw new ArgumentsLengthError(this.argumentsLength, 3);
-        }
-        return triFunction.apply(a, b, c);
-    }
-
-    public R apply(T a, U b, V c, W d) {
-        if (argumentsLength != 4) {
-            throw new ArgumentsLengthError(this.argumentsLength, 4);
-        }
-        return quadFunction.apply(a, b, c, d);
     }
 }

@@ -66,38 +66,28 @@ public class Value<T> {
         }
 
         var castMap = castToMap(value);
-        if (!castMap.isEmpty()) {
+        if (castMap != null) {
             this.type = ValueType.Struct;
-            this.fields = castToMap(value);
+            this.fields = castMap;
             return;
         }
 
-        ValueType valueType = ValueType.Struct;
-        try {
-            this.fields = buildStruct(value);
-        } catch (UnableReadFieldError e) {
-            // todo log error
-
-            valueType = ValueType.Undefined;
-        } finally {
-            this.type = valueType;
-        }
-
+        this.fields = buildStruct(value);
+        this.type = ValueType.Struct;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> castToMap(Object obj) {
-        Map<String, Object> result = new HashMap<>();
-
         if  (! (obj instanceof Map<?, ?> rawMap)) {
-            return result;
+            return null;
         }
 
-        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-            if (entry.getKey() instanceof String key) {
-                result.put(key, entry.getValue());
+        for (Object key : rawMap.keySet()) {
+            if (!(key instanceof String)) {
+                return null;
             }
         }
-        return result;
+        return (Map<String, Object>) rawMap;
     }
 
     private Map<String, Object> buildStruct(Object obj) {

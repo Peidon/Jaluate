@@ -1,9 +1,11 @@
 package org.xpd.operator;
 
 import org.xpd.errors.FunctionNotExistsError;
+import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
 import org.xpd.type.Value;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -28,12 +30,12 @@ public class Factory {
     }
 
     public Operator<Boolean> makeEquals() {
-        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) == 0;
+        BiFunction<Object, Object, Boolean> fn = Objects::equals;
         return new FunctionalOperator<>(fn);
     }
 
     public Operator<Boolean> makeNotEquals() {
-        BiFunction<Comparable<Object>, Comparable<Object>, Boolean> fn = (a, b) -> a.compareTo(b) != 0;
+        BiFunction<Object, Object, Boolean> fn = (a, b) -> !Objects.equals(a, b);
         return new FunctionalOperator<>(fn);
     }
 
@@ -136,6 +138,16 @@ public class Factory {
 
     public Operator<Object> makeAccess(String attrName) {
         Function<Map<String, Object>, Object> fn = (struct) -> struct.get(attrName);
+        return new FunctionalOperator<>(fn);
+    }
+
+    public Operator<Map<String, Object>> makeMap(Map<String, Object> attrs) {
+        Supplier<Map<String, Object>> fn = () -> attrs;
+        return new FunctionalOperator<>(fn);
+    }
+
+    public Operator<Pair> makePair(String key) {
+        Function<Object, Pair> fn = (a) -> new Pair(key, a);
         return new FunctionalOperator<>(fn);
     }
 }
