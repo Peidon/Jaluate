@@ -4,10 +4,10 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.xpd.ast.ValuateParser;
 import org.xpd.ast.*;
+import org.xpd.core.Constant;
 import org.xpd.errors.NullOperatorException;
 import org.xpd.errors.VisitParserTreeError;
 import org.xpd.operator.Factory;
-import org.xpd.operator.Operator;
 import org.xpd.operator.Symbol;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
@@ -17,7 +17,6 @@ import java.util.*;
 
 public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
     private final ValuateParser.PlanContext plan;
-    private Map<String, Operator<Object>>  functions;
     private final Factory operatorFactory;
     private Map<String, Object> parameters;
 
@@ -34,11 +33,6 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         parser.setBuildParseTree(true);
         this.plan = parser.plan();
         this.operatorFactory = new Factory();
-    }
-
-    public EvaluableExpression(String text, Map<String, Operator<Object>> functions) {
-        this(text);
-        this.functions = functions;
     }
 
     public Object Eval() {
@@ -194,7 +188,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         if (identify != null && args != null) {
             String funcName = identify.getText();
             var argStage = args.accept(this);
-            return new EvalStage(Symbol.FUNCTIONAL, operatorFactory.makeFunction(funcName, functions),
+            return new EvalStage(Symbol.FUNCTIONAL, operatorFactory.makeFunction(funcName, Constant.getFunctions()),
                     new ArrayList<>(Collections.singletonList(argStage)));
         }
         throw new VisitParserTreeError("primary expression is null");

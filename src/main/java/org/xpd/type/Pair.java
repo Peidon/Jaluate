@@ -5,6 +5,7 @@ public class Pair {
     Object Value;
     public Pair(String key, Object value) {
         this.Key = key;
+        this.Value = value;
     }
     public String getKey() {
         return Key;

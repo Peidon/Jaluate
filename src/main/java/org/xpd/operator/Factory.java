@@ -125,9 +125,9 @@ public class Factory {
         return new FunctionalOperator<>(fn);
     }
 
-    public Operator<Object> makeFunction(String fnName, Map<String, Operator<Object>> operators) {
+    public Operator<Object> makeFunction(String fnName, Map<String, Operator<?>> operators) {
         Function<Object[], Object> fn = (args) -> {
-            Operator<Object> f = operators.get(fnName);
+            Operator<?> f = operators.get(fnName);
             if (f == null) {
                 throw new FunctionNotExistsError(fnName);
             }

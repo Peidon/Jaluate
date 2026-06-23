@@ -1,6 +1,9 @@
 package org.xpd;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xpd.core.Constant;
+import org.xpd.operator.FunctionalOperator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +15,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class EvaluableExpressionTest {
+
+    @BeforeClass
+    public static void init() {
+        var functions = Map.of("timestamp", new FunctionalOperator<>(System::currentTimeMillis));
+        Constant.initFunctions(functions);
+    }
+
     @Test
     public void evalReturnsNullLiteral() {
         assertNull(eval("null"));
