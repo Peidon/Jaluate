@@ -1,5 +1,6 @@
 package org.xpd.operator;
 
+import org.xpd.core.Operator;
 import org.xpd.errors.ArgumentsLengthError;
 
 import java.util.function.BiFunction;

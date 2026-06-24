@@ -1,6 +1,5 @@
 package org.xpd.core;
 
-import org.xpd.operator.Operator;
 import java.util.Map;
 
 public class Constant {

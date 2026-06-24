@@ -3,6 +3,7 @@ package org.xpd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xpd.core.Constant;
+import org.xpd.example.CarShop;
 import org.xpd.operator.FunctionalOperator;
 
 import java.util.HashMap;
@@ -18,7 +19,17 @@ public class EvaluableExpressionTest {
 
     @BeforeClass
     public static void init() {
-        var functions = Map.of("timestamp", new FunctionalOperator<>(System::currentTimeMillis));
+        var functions = Map.of(
+                "timestamp", new FunctionalOperator<>(System::currentTimeMillis),
+                "getModelByID", new FunctionalOperator<>(CarShop::getModelByID),
+                "getColorByID", new FunctionalOperator<>(CarShop::getColorByID),
+                "carInfoByID", new FunctionalOperator<Integer, Object, Object, Object, Map<String, Object>>(
+                        id -> Map.of(
+                                "model", CarShop.getModelByID(id),
+                                "color", CarShop.getColorByID(id)
+                        )
+                )
+        );
         Constant.initFunctions(functions);
     }
 
@@ -93,6 +104,56 @@ public class EvaluableExpressionTest {
     @Test
     public void evalAccessesMapFields() {
         assertEquals(3, eval("a.score", Map.of("a", Map.of("score", 3))));
+    }
+
+    @Test
+    public void evalAccessesNestedMapFields() {
+        Map<String, Object> params = Map.of(
+                "shop", Map.of(
+                        "featured", Map.of(
+                                "model", "roadster",
+                                "color", "orange"
+                        )
+                )
+        );
+
+        assertEquals("roadster", eval("shop.featured.model", params));
+        assertEquals("orange", eval("shop.featured.color", params));
+    }
+
+    @Test
+    public void evalAccessesFunctionResultFields() {
+        assertEquals("pickup", eval("carInfoByID(7).model"));
+        assertEquals("green", eval("carInfoByID(7).color"));
+    }
+
+    @Test
+    public void evalCallsNoArgumentFunction() {
+        assertTrue((Long) eval("timestamp()") > 0);
+    }
+
+    @Test
+    public void evalCallsUnaryFunctionWithLiteralArgument() {
+        assertEquals("crossover", eval("getModelByID(10)"));
+        assertEquals("purple", eval("getColorByID(10)"));
+    }
+
+    @Test
+    public void evalCallsUnaryFunctionWithParameterArgument() {
+        assertEquals("limousine", eval("getModelByID(carId)", Map.of("carId", 11)));
+        assertEquals("black", eval("getColorByID(carId)", Map.of("carId", 11)));
+    }
+
+    @Test
+    public void evalUsesFunctionalOperatorInsideComparison() {
+        assertTrue((Boolean) eval("getModelByID(carId) == expected", Map.of(
+                "carId", 3,
+                "expected", "coupe"
+        )));
+        assertFalse((Boolean) eval("getColorByID(carId) == expected", Map.of(
+                "carId", 3,
+                "expected", "white"
+        )));
     }
 
     @Test

@@ -218,7 +218,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         if (expr != null) {
             return  expr.accept(this);
         }
-        throw new VisitParserTreeError("arguments expression is null");
+        return new EvalStage(Symbol.VALUE, operatorFactory.makeArrayConst(null));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.xpd.operator;
 
+import org.xpd.core.Operator;
 import org.xpd.errors.FunctionNotExistsError;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;

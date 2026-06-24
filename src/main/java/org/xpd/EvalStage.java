@@ -1,6 +1,6 @@
 package org.xpd;
 
-import org.xpd.operator.Operator;
+import org.xpd.core.Operator;
 import org.xpd.operator.Symbol;
 
 import java.util.ArrayList;
