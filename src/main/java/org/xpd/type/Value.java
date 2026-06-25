@@ -152,6 +152,14 @@ public class Value<T> {
         throw new ValueTypeCastError(Map.class.getName(), value);
     }
 
+    public Object getObject() {
+        return switch (type) {
+            case Struct -> this.getStruct();
+            case Array -> this.getArray();
+            default -> this.get();
+        };
+    }
+
     public T get() {
         return value;
     }

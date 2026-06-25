@@ -1,5 +1,6 @@
 package org.xpd.operator;
 
+import org.xpd.core.Constant;
 import org.xpd.core.Operator;
 import org.xpd.errors.FunctionNotExistsError;
 import org.xpd.type.Pair;
@@ -24,7 +25,7 @@ public class Factory {
             case None -> null;
             case Boolean -> Boolean.parseBoolean(literal);
             case Integer -> Integer.parseInt(literal);
-            case String -> literal;
+            case String -> Constant.stripChar(literal, '"');
             case Number ->  Double.parseDouble(literal);
         };
         return new FunctionalOperator<>(fn);

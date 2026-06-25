@@ -11,6 +11,7 @@ import org.xpd.operator.Factory;
 import org.xpd.operator.Symbol;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
+import org.xpd.type.Value;
 
 import java.util.*;
 
@@ -59,7 +60,9 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         int n = dep.size();
         var args = new Object[n];
         for (int i = 0; i < n; i++) {
-            args[i] = evalStage(dep.get(i));
+            var ev = evalStage(dep.get(i));
+            var value = new Value<>(ev);
+            args[i] = value.getObject();
         }
         return op.execute(args);
     }

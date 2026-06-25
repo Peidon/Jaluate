@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xpd.core.Constant;
 import org.xpd.example.CarShop;
+import org.xpd.example.Common;
 import org.xpd.operator.FunctionalOperator;
 
 import java.util.HashMap;
@@ -28,7 +29,9 @@ public class EvaluableExpressionTest {
                                 "model", CarShop.getModelByID(id),
                                 "color", CarShop.getColorByID(id)
                         )
-                )
+                ),
+                "checkModelAndColor", new FunctionalOperator<>(CarShop::checkModelAndColor),
+                "len", new FunctionalOperator<>(Common::length)
         );
         Constant.initFunctions(functions);
     }
@@ -42,6 +45,12 @@ public class EvaluableExpressionTest {
     public void evalReturnsBooleanLiterals() {
         assertEquals(true, eval("true"));
         assertEquals(false, eval("false"));
+    }
+
+    @Test
+    public void evalReturnsStringLiterals() {
+        assertEquals("abc", eval("\"abc\""));
+        assertEquals("123", eval("\"123\""));
     }
 
     @Test
@@ -107,6 +116,27 @@ public class EvaluableExpressionTest {
     }
 
     @Test
+    public void evalAccessesClassFields() {
+        var car = CarShop.get(1);
+        assertTrue((Boolean) eval("car.model==model", Map.of("car", car, "model", car.getModel())));
+        assertTrue((Boolean) eval("car.color==color", Map.of("car", car, "color", car.getColor())));
+    }
+
+    @Test
+    public void evalAccessesNestedClassFields() {
+        var car = CarShop.get(1);
+        assertEquals(car.getDriver().age(), eval("car.driver.age", Map.of("car", car)));
+    }
+
+    @Test
+    public void evalAccessesNestedArrayFields() {
+        var car = CarShop.get(2);
+        assertEquals(car.getWheels()[0].weight(), eval("car.wheels[0].weight", Map.of("car", car)));
+        assertEquals(car.getWheels()[1].size(), eval("car.wheels[1].size", Map.of("car", car)));
+        assertEquals(car.getWheels().length,  eval("len(car.wheels)", Map.of("car", car)));
+    }
+
+    @Test
     public void evalAccessesNestedMapFields() {
         Map<String, Object> params = Map.of(
                 "shop", Map.of(
@@ -154,6 +184,7 @@ public class EvaluableExpressionTest {
                 "carId", 3,
                 "expected", "white"
         )));
+        assertFalse((Boolean) eval("checkModelAndColor(\"pickup\", \"black\") >= 0"));
     }
 
     @Test

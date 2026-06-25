@@ -13,6 +13,20 @@ public class Car {
         this.color = color;
     }
 
+    public Car(int id, String model, String color, Wheel[] wheels) {
+        this.id = id;
+        this.model = model;
+        this.color = color;
+        this.wheels = wheels;
+    }
+
+    public Car(int id, String model, String color, Driver driver) {
+        this.id = id;
+        this.model = model;
+        this.color = color;
+        this.driver = driver;
+    }
+
     public int getId() {
         return id;
     }
@@ -28,17 +42,5 @@ public class Car {
     }
     public Driver getDriver() {
         return driver;
-    }
-
-    public void setDriver(Driver driver) {
-        this.driver = driver;
-    }
-
-    public void setWheels(Wheel[] wheels) {
-        this.wheels = wheels;
-    }
-
-    public boolean run() {
-        return driver != null;
     }
 }

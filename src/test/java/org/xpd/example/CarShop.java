@@ -5,8 +5,9 @@ import java.util.Map;
 public class CarShop {
 
     private static final Map<Integer, Car> cars = Map.ofEntries(
-            Map.entry(1, new Car(1, "sedan", "red")),
-            Map.entry(2, new Car(2, "suv", "blue")),
+            Map.entry(1, new Car(1, "sedan", "red", new Driver("Jason", "Han", 3))),
+            Map.entry(2, new Car(2, "suv", "blue",
+                    new Wheel[]{new Wheel(4.0, 12L),new Wheel(4.0, 12L),new Wheel(4.0, 12L),new Wheel(4.0, 12L)})),
             Map.entry(3, new Car(3, "coupe", "black")),
             Map.entry(4, new Car(4, "hatchback", "white")),
             Map.entry(5, new Car(5, "wagon", "silver")),
@@ -17,6 +18,10 @@ public class CarShop {
             Map.entry(10, new Car(10, "crossover", "purple")),
             Map.entry(11, new Car(11, "limousine", "black"))
     );
+
+    public static Car get(int id) {
+        return cars.get(id);
+    }
 
     public static String getModelByID(int id) {
         return cars.get(id).getModel();

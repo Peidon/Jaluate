@@ -21,4 +21,17 @@ public class Constant {
     public static Map<String, Operator<?>> getFunctions() {
         return functions;
     }
+
+    public static String stripChar(String text, char target) {
+        int start = 0;
+        int end = text.length();
+
+        if (start < end && text.charAt(start) == target) {
+            start++;
+        }
+        if (end > start && text.charAt(end - 1) == target) {
+            end--;
+        }
+        return text.substring(start, end);
+    }
 }

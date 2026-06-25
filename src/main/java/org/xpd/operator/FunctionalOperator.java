@@ -60,11 +60,31 @@ public class FunctionalOperator<T, U, V, W, R> implements Operator<R> {
             return supplier.get();
         }
         return switch (args.length) {
-            case 1 -> unaryFunction.apply((T)args[0]);
-            case 2 -> biFunction.apply((T)args[0], (U)args[1]);
-            case 3 -> triFunction.apply((T)args[0], (U)args[1], (V)args[2]);
-            case 4 -> quadFunction.apply((T)args[0], (U)args[1], (V)args[2], (W)args[3]);
+            case 1 -> unaryFunction.apply(first(args[0]));
+            case 2 -> biFunction.apply(first(args[0]), second(args[1]));
+            case 3 -> triFunction.apply(first(args[0]), second(args[1]), third(args[2]));
+            case 4 -> quadFunction.apply(first(args[0]), second(args[1]), third(args[2]), fourth(args[3]));
             default -> throw new ArgumentsLengthError(args.length);
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private T first(Object arg) {
+        return (T) arg;
+    }
+
+    @SuppressWarnings("unchecked")
+    private U second(Object arg) {
+        return (U) arg;
+    }
+
+    @SuppressWarnings("unchecked")
+    private V third(Object arg) {
+        return (V) arg;
+    }
+
+    @SuppressWarnings("unchecked")
+    private W fourth(Object arg) {
+        return (W) arg;
     }
 }
