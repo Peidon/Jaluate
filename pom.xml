@@ -10,6 +10,7 @@
     <packaging>jar</packaging>
     <name>Jaluate</name>
     <description>Java expression evaluator</description>
+    <url>https://github.com/Peidon/Jaluate</url>
 
     <licenses>
         <license>
@@ -20,7 +21,7 @@
 
     <developers>
         <developer>
-            <id>peidon</id>
+            <id>Peidon</id>
             <name>Peidong Xu</name>
         </developer>
     </developers>
