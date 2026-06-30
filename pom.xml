@@ -6,7 +6,7 @@
 
     <groupId>io.github.peidon</groupId>
     <artifactId>jaluate</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
     <name>Jaluate</name>
     <description>Java expression evaluator</description>
