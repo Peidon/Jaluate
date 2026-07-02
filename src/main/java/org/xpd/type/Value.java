@@ -141,8 +141,12 @@ public class Value<T> {
 
             return values;
         }
+
+        if (value != null) {
+            throw  new ValueTypeCastError(Object[].class.getName(), value);
+        }
         
-        throw new ValueTypeCastError(Object[].class.getName(), value);
+        throw new ValueTypeCastError(Object[].class.getName());
     }
 
     public Map<String, ?> getStruct() {
