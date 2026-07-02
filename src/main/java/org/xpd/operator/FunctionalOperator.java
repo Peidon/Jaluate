@@ -59,13 +59,22 @@ public class FunctionalOperator<T, U, V, W, R> implements Operator<R> {
         if (args == null || args.length == 0) {
             return supplier.get();
         }
-        return switch (args.length) {
-            case 1 -> unaryFunction.apply(first(args[0]));
-            case 2 -> biFunction.apply(first(args[0]), second(args[1]));
-            case 3 -> triFunction.apply(first(args[0]), second(args[1]), third(args[2]));
-            case 4 -> quadFunction.apply(first(args[0]), second(args[1]), third(args[2]), fourth(args[3]));
-            default -> throw new ArgumentsLengthError(args.length);
-        };
+        switch (args.length) {
+            case 1: {
+                return unaryFunction.apply(first(args[0]));
+            }
+            case 2: {
+                return biFunction.apply(first(args[0]), second(args[1]));
+            }
+            case 3: {
+                return triFunction.apply(first(args[0]), second(args[1]), third(args[2]));
+            }
+            case 4: {
+                return quadFunction.apply(first(args[0]), second(args[1]), third(args[2]), fourth(args[3]));
+            }
+            default:
+                throw new ArgumentsLengthError(args.length);
+        }
     }
 
     @SuppressWarnings("unchecked")

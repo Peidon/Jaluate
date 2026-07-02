@@ -125,14 +125,14 @@ public class EvaluableExpressionTest {
     @Test
     public void evalAccessesNestedClassFields() {
         var car = CarShop.get(1);
-        assertEquals(car.getDriver().age(), eval("car.driver.age", Map.of("car", car)));
+        assertEquals(car.getDriver().getAge(), eval("car.driver.age", Map.of("car", car)));
     }
 
     @Test
     public void evalAccessesNestedArrayFields() {
         var car = CarShop.get(2);
-        assertEquals(car.getWheels()[0].weight(), eval("car.wheels[0].weight", Map.of("car", car)));
-        assertEquals(car.getWheels()[1].size(), eval("car.wheels[1].size", Map.of("car", car)));
+        assertEquals(car.getWheels()[0].getWeight(), eval("car.wheels[0].weight", Map.of("car", car)));
+        assertEquals(car.getWheels()[1].getSize(), eval("car.wheels[1].size", Map.of("car", car)));
         assertEquals(car.getWheels().length,  eval("len(car.wheels)", Map.of("car", car)));
     }
 

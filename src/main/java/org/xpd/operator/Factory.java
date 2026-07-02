@@ -3,6 +3,7 @@ package org.xpd.operator;
 import org.xpd.core.Constant;
 import org.xpd.core.Operator;
 import org.xpd.errors.FunctionNotExistsError;
+import org.xpd.errors.UnknownPrimitiveTypeError;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
 import org.xpd.type.Value;
@@ -21,12 +22,25 @@ public class Factory {
     }
 
     public Operator<Object> makeLiteral(String literal, PrimitiveType type) {
-        Supplier<Object> fn = () -> switch (type) {
-            case None -> null;
-            case Boolean -> Boolean.parseBoolean(literal);
-            case Integer -> Integer.parseInt(literal);
-            case String -> Constant.stripChar(literal, '"');
-            case Number ->  Double.parseDouble(literal);
+        Supplier<Object> fn = () -> {
+            switch (type) {
+                case None: {
+                    return null;
+                }
+                case Boolean:{
+                    return Boolean.parseBoolean(literal);
+                }
+                case Integer: {
+                    return Integer.parseInt(literal);
+                }
+                case String: {
+                    return Constant.stripChar(literal, '"');
+                }
+                case Number: {
+                    return Double.parseDouble(literal);
+                }
+            }
+            throw new UnknownPrimitiveTypeError(type.name());
         };
         return new FunctionalOperator<>(fn);
     }

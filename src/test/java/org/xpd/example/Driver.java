@@ -1,3 +1,16 @@
 package org.xpd.example;
 
-public record Driver(String firstName, String lastName, int age) {}
+public class Driver {
+    String firstName;
+    String lastName;
+    int age;
+    public Driver(String firstName, String lastName, int age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}

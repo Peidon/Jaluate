@@ -78,16 +78,17 @@ public class Value<T> {
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> castToMap(Object obj) {
-        if  (! (obj instanceof Map<?, ?> rawMap)) {
+        if  (! (obj instanceof Map<?, ?>)) {
             return null;
         }
+        var rawMap = (Map<String, Object>) obj;
 
         for (Object key : rawMap.keySet()) {
             if (!(key instanceof String)) {
                 return null;
             }
         }
-        return (Map<String, Object>) rawMap;
+        return rawMap;
     }
 
     private Map<String, Object> buildStruct(Object obj) {
@@ -157,11 +158,17 @@ public class Value<T> {
     }
 
     public Object getObject() {
-        return switch (type) {
-            case Struct -> this.getStruct();
-            case Array -> this.getArray();
-            default -> this.get();
-        };
+        switch (type) {
+            case Struct: {
+                return this.getStruct();
+            }
+            case Array: {
+                return this.getArray();
+            }
+            default: {
+                return this.get();
+            }
+        }
     }
 
     public T get() {

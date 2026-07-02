@@ -309,7 +309,8 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         for (ValuateParser.PairContext pair: ctx.pair()) {
             var stage = this.visit(pair);
             var obj = evalStage(stage);
-            if (obj instanceof Pair kv) {
+            if (obj instanceof Pair) {
+                var kv = (Pair) obj;
                 attrs.put(kv.getKey(), kv.getValue());
             } else {
                 throw new VisitParserTreeError("parse pair failed. ");

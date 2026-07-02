@@ -1,3 +1,20 @@
 package org.xpd.example;
 
-public record Wheel(Double size, Long weight) {}
+
+public class Wheel{
+    private final Double size;
+    private final Long weight;
+
+    public Wheel(Double size, Long weight) {
+        this.size = size;
+        this.weight = weight;
+    }
+
+    public Double getSize() {
+        return size;
+    }
+
+    public Long getWeight() {
+        return weight;
+    }
+}
