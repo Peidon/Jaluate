@@ -121,6 +121,10 @@ public class Value<T> {
         return (Integer) value;
     }
 
+    public Boolean getBoolean() {
+        return (Boolean) value;
+    }
+
     public Object[] getArray() {
         if (value != null && value.getClass().isArray()) {
             int length = Array.getLength(value);

@@ -80,6 +80,7 @@ public class EvaluableExpressionTest {
     public void evalCalculatesLogicalExpressions() {
         assertEquals(true, eval("abc > 2 && ${c} == true", Map.of("abc", 3, "c", true)));
         assertEquals(false, eval("abc > 2 && ${c} == true", Map.of("abc", 3, "c", false)));
+        assertEquals(true, eval("abc > 2 || ${c} == true", Map.of("abc", 3, "c", false)));
     }
 
     @Test

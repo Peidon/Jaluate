@@ -29,6 +29,10 @@ public class EvalStage {
         return symbol.getSymbol();
     }
 
+    public Symbol getSymbolEnum() {
+        return symbol;
+    }
+
     public ArrayList<EvalStage> getDependencies() {
         return dependencies;
     }

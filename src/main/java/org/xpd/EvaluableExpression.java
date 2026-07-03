@@ -53,6 +53,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         if (op == null) {
             throw new NullOperatorException(stage.getSymbol());
         }
+        var sym = stage.getSymbolEnum();
         var dep = stage.getDependencies();
         if (dep == null) {
             return op.execute();
@@ -62,6 +63,12 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         for (int i = 0; i < n; i++) {
             var ev = evalStage(dep.get(i));
             var value = new Value<>(ev);
+            if (sym == Symbol.AND && !value.getBoolean()) {
+                return false;
+            }
+            if  (sym == Symbol.OR && value.getBoolean()) {
+                return true;
+            }
             args[i] = value.getObject();
         }
         return op.execute(args);

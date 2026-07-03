@@ -39,8 +39,10 @@ public class Factory {
                 case Number: {
                     return Double.parseDouble(literal);
                 }
+                default: {
+                    throw new UnknownPrimitiveTypeError(type.name());
+                }
             }
-            throw new UnknownPrimitiveTypeError(type.name());
         };
         return new FunctionalOperator<>(fn);
     }
