@@ -6,7 +6,7 @@
 
     <groupId>io.github.peidon</groupId>
     <artifactId>jaluate</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
     <name>Jaluate</name>
     <description>Java expression evaluator</description>
@@ -103,6 +103,12 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <gpgArgument>--pinentry-mode</gpgArgument>
+                                <gpgArgument>loopback</gpgArgument>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -115,14 +121,20 @@
 
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-
                     <autoPublish>true</autoPublish>
-
                     <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
 
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Github Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/peidon/jaluate</url>
+        </repository>
+    </distributionManagement>
 
 </project>
