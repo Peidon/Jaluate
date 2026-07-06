@@ -72,8 +72,15 @@ public class EvaluableExpressionTest {
     public void evalCalculatesComparisonExpressions() {
         assertEquals(true, eval("5 > 2"));
         assertEquals(false, eval("5 <= 2"));
+        assertEquals(true, eval("a==b", Map.of("a", 5.0, "b", 5)));
         assertEquals(true, eval("a == 3", Map.of("a", 3)));
         assertEquals(true, eval("a != 2", Map.of("a", 3)));
+    }
+
+    @Test
+    public void evalCalculatesComparisonExpressionsWithParams() {
+        assertEquals(false, eval("(requests_made * requests_succeeded / 100) >= 90",
+                Map.of("requests_made", 100,"requests_succeeded", 80)));
     }
 
     @Test

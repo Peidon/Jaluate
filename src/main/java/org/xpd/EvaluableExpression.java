@@ -12,6 +12,7 @@ import org.xpd.operator.Symbol;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
 import org.xpd.type.Value;
+import org.xpd.type.ValueType;
 
 import java.util.*;
 
@@ -47,6 +48,15 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         return this.evalStage(stage);
     }
 
+    private Object getArgument(Symbol symbol, Value<Object> value) {
+        for (Symbol sym : Factory.comparisonSymbols) {
+            if (sym.equals(symbol) && value.getType().equals(ValueType.Number)) {
+                return value.getDouble();
+            }
+        }
+        return value.getObject();
+    }
+
 
     private Object evalStage(EvalStage stage) {
         var op = stage.getOperator();
@@ -69,7 +79,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
             if  (sym == Symbol.OR && value.getBoolean()) {
                 return true;
             }
-            args[i] = value.getObject();
+            args[i] = getArgument(stage.getSymbolEnum(), value);
         }
         return op.execute(args);
     }

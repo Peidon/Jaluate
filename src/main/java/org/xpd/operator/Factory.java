@@ -16,6 +16,10 @@ import java.util.function.Supplier;
 
 public class Factory {
 
+    public static Symbol[] comparisonSymbols =  new Symbol[] {Symbol.EQ, Symbol.NEQ,
+            Symbol.GT, Symbol.LT, Symbol.GTE, Symbol.LTE};
+
+
     public Operator<Object> makeValue(Map<String, Object> params, String key) {
         Supplier<Object> fn = ()-> params.get(key);
         return new FunctionalOperator<>(fn);

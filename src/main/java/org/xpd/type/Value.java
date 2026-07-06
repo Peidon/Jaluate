@@ -2,6 +2,7 @@ package org.xpd.type;
 
 import org.xpd.errors.UnableReadFieldError;
 import org.xpd.errors.ValueTypeCastError;
+import org.xpd.errors.IncorrectPrimitiveTypeError;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -117,8 +118,19 @@ public class Value<T> {
         return fields;
     }
 
+    private Number getNumber() {
+        if (type != ValueType.Number) {
+            throw new IncorrectPrimitiveTypeError(type.name());
+        }
+        return (Number) value;
+    }
+
     public Integer getInt() {
-        return (Integer) value;
+        return getNumber().intValue();
+    }
+
+    public Double getDouble() {
+        return getNumber().doubleValue();
     }
 
     public Boolean getBoolean() {
