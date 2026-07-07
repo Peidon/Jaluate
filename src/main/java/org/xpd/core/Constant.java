@@ -22,14 +22,14 @@ public class Constant {
         return functions;
     }
 
-    public static String stripChar(String text, char target) {
+    public static String stripChar(String text) {
         int start = 0;
         int end = text.length();
 
-        if (start < end && text.charAt(start) == target) {
+        while (start < end && (text.charAt(start) == '"' || text.charAt(start) == '\'')) {
             start++;
         }
-        if (end > start && text.charAt(end - 1) == target) {
+        while (end > start && (text.charAt(end - 1) == '"'  || text.charAt(end - 1) == '\'')) {
             end--;
         }
         return text.substring(start, end);

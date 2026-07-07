@@ -51,6 +51,8 @@ public class EvaluableExpressionTest {
     public void evalReturnsStringLiterals() {
         assertEquals("abc", eval("\"abc\""));
         assertEquals("123", eval("\"123\""));
+        assertEquals("abc123", eval("'abc123'"));
+        assertEquals("hello world\n", eval("'''hello world\n'''"));
     }
 
     @Test
@@ -111,6 +113,15 @@ public class EvaluableExpressionTest {
     @Test
     public void evalReturnsArrayElementByLiteralIndex() {
         assertEquals(2, eval("a[1]", Map.of("a", new Object[]{1, 2, 3})));
+    }
+
+    @Test
+    public void evalReturnsMapValueByKey() {
+        var expr = "{'high' : 10, 'width' : 20.0}";
+        var obj = eval(expr);
+        assertTrue(obj instanceof Map);
+        assertEquals(10, ((Map<?, ?>) obj).get("high"));
+        assertEquals(20.0, ((Map<?, ?>) obj).get("width"));
     }
 
     @Test

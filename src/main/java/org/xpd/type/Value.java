@@ -166,7 +166,7 @@ public class Value<T> {
         throw new ValueTypeCastError(Object[].class.getName());
     }
 
-    public Map<String, ?> getStruct() {
+    public Map<String, Object> getStruct() {
         if (type == ValueType.Struct) {
             return this.fields;
         }

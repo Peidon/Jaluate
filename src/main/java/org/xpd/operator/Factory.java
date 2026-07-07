@@ -38,7 +38,7 @@ public class Factory {
                     return Integer.parseInt(literal);
                 }
                 case String: {
-                    return Constant.stripChar(literal, '"');
+                    return Constant.stripChar(literal);
                 }
                 case Number: {
                     return Double.parseDouble(literal);

@@ -17,7 +17,7 @@ import org.xpd.type.ValueType;
 import java.util.*;
 
 
-public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
+public class EvaluableExpression extends ValuateParserBaseVisitor<EvalStage> {
     private final ValuateParser.PlanContext plan;
     private final Factory operatorFactory;
     private Map<String, Object> parameters;
@@ -343,7 +343,7 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         if (key == null || lit == null) {
             throw new VisitParserTreeError("pair is null");
         }
-        return new EvalStage(Symbol.LITERAL, operatorFactory.makePair(key.getText()),
+        return new EvalStage(Symbol.LITERAL, operatorFactory.makePair(Constant.stripChar(key.getText())),
                 new ArrayList<>(Collections.singletonList(lit.accept(this))));
     }
 
@@ -369,25 +369,5 @@ public class EvaluableExpression implements ValuateParserVisitor<EvalStage> {
         }
         var stage = idx.accept(this);
         return new EvalStage(Symbol.INDEX, operatorFactory.makeIndex(), new ArrayList<>(Collections.singletonList(stage)));
-    }
-
-    @Override
-    public EvalStage visit(ParseTree parseTree) {
-        return null;
-    }
-
-    @Override
-    public EvalStage visitChildren(RuleNode ruleNode) {
-        return null;
-    }
-
-    @Override
-    public EvalStage visitTerminal(TerminalNode terminalNode) {
-        return null;
-    }
-
-    @Override
-    public EvalStage visitErrorNode(ErrorNode errorNode) {
-        return null;
     }
 }
