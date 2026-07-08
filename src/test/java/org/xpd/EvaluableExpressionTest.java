@@ -31,7 +31,10 @@ public class EvaluableExpressionTest {
                         )
                 ),
                 "checkModelAndColor", new FunctionalOperator<>(CarShop::checkModelAndColor),
-                "len", new FunctionalOperator<>(Common::length)
+                "len", new FunctionalOperator<>(Common::length),
+                "log", new FunctionalOperator<>(Math::log),
+                "exp", new FunctionalOperator<>(Math::exp),
+                "sqrt", new FunctionalOperator<>(Math::sqrt)
         );
         Constant.initFunctions(functions);
     }
@@ -204,6 +207,12 @@ public class EvaluableExpressionTest {
                 "expected", "white"
         )));
         assertFalse((Boolean) eval("checkModelAndColor(\"pickup\", \"black\") >= 0"));
+    }
+
+    @Test
+    public void evalMathFunction() {
+        assertEquals(2.0, eval("sqrt(4.0)"));
+        assertEquals(3.0, eval("log(exp(3.0))"));
     }
 
     @Test

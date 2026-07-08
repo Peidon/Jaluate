@@ -2,6 +2,7 @@ package org.xpd.operator;
 
 import org.xpd.core.Constant;
 import org.xpd.core.Operator;
+import org.xpd.errors.FunctionArgTypeError;
 import org.xpd.errors.FunctionNotExistsError;
 import org.xpd.errors.UnknownPrimitiveTypeError;
 import org.xpd.type.Pair;
@@ -153,7 +154,11 @@ public class Factory {
             if (f == null) {
                 throw new FunctionNotExistsError(fnName);
             }
-            return f.execute(args);
+            try {
+                return f.execute(args);
+            } catch (ClassCastException e) {
+                throw new FunctionArgTypeError(fnName);
+            }
         };
         return new FunctionalOperator<>(fn);
     }
