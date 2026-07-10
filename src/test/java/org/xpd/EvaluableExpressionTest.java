@@ -3,6 +3,8 @@ package org.xpd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xpd.core.Constant;
+import org.xpd.errors.FieldNotExistsError;
+import org.xpd.errors.IndexOutOfBoundsError;
 import org.xpd.example.CarShop;
 import org.xpd.example.Common;
 import org.xpd.operator.FunctionalOperator;
@@ -10,11 +12,7 @@ import org.xpd.operator.FunctionalOperator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class EvaluableExpressionTest {
 
@@ -130,6 +128,7 @@ public class EvaluableExpressionTest {
     @Test
     public void evalReturnsArrayElementByParameterIndex() {
         assertEquals(2, eval("a[idx]", Map.of("a", new Object[]{1, 2, 3}, "idx", 1)));
+        assertThrows(IndexOutOfBoundsError.class, () -> eval("a[4]", Map.of("a", new Object[]{1, 2, 3})));
     }
 
     @Test
@@ -171,6 +170,7 @@ public class EvaluableExpressionTest {
 
         assertEquals("roadster", eval("shop.featured.model", params));
         assertEquals("orange", eval("shop.featured.color", params));
+        assertThrows(FieldNotExistsError.class, () -> eval("shop.feat.color", params));
     }
 
     @Test

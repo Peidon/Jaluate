@@ -2,9 +2,7 @@ package org.xpd.operator;
 
 import org.xpd.core.Constant;
 import org.xpd.core.Operator;
-import org.xpd.errors.FunctionArgTypeError;
-import org.xpd.errors.FunctionNotExistsError;
-import org.xpd.errors.UnknownPrimitiveTypeError;
+import org.xpd.errors.*;
 import org.xpd.type.Pair;
 import org.xpd.type.PrimitiveType;
 import org.xpd.type.Value;
@@ -138,7 +136,12 @@ public class Factory {
 
     // primary_expr [ index ]
     public Operator<Object> makeArrayIndex() {
-        BiFunction<Object[], Integer, Object> fn = (arr, idx) -> arr[idx];
+        BiFunction<Object[], Integer, Object> fn = (arr, idx) -> {
+            if (idx >= arr.length) {
+                throw new IndexOutOfBoundsError(idx, arr.length);
+            }
+            return arr[idx];
+        };
         return new FunctionalOperator<>(fn);
     }
 
@@ -164,7 +167,12 @@ public class Factory {
     }
 
     public Operator<Object> makeAccess(String attrName) {
-        Function<Map<String, Object>, Object> fn = (struct) -> struct.get(attrName);
+        Function<Map<String, Object>, Object> fn = (struct) -> {
+            if (!struct.containsKey(attrName)) {
+                throw new FieldNotExistsError(attrName);
+            }
+            return struct.get(attrName);
+        };
         return new FunctionalOperator<>(fn);
     }
 
