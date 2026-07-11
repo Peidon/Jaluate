@@ -1,5 +1,5 @@
-Java valuate
-========
+# Jaluate - Java valuate  
+
 
 ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=Peidon.Jaluate)
 [![Publish](https://github.com/Peidon/Jaluate/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/Peidon/Jaluate/actions/workflows/maven-publish.yml)
@@ -8,86 +8,164 @@ Java valuate
 | For the Go version, see [the repository](https://github.com/Peidon/kit/blob/master/README.md#1-valuate). |
 |----------------------------------------------------------------------------------------------------------|
 
-An expression evaluator, supporting functions orchestration and execution of operator flow.
 
+A lightweight and extensible expression evaluator, supporting function orchestration, and operator flow execution.
 
 ## Key Features
 
-* Supports null, decimal numeral, boolean, string(bytes), list(array), map(struct), functions and variables expressions.
-* Supports accessor, allowing field extraction from objects, value lookup from maps by key, and access by array index.
-* Custom Java functions can be added easily.
-* Requires minimum Java version 11.
+* Supports functions expressions.
+* Supports field accessors:
 
-[//]: # (* Parallel execution of operators and functions is optional.)
+    * Object field extraction
+    * Map value lookup by key
+    * Array indexing
+* Easily extensible with custom Java functions.
+
+<!-- Parallel execution of operators and functions is planned for future releases. -->
+
+---
 
 ## Installation
 
-| To include it in your Maven project, see [the package](https://github.com/Peidon/Jaluate/packages/3115718) |
-|------------------------------------------------------------------------------------------------------------|
+Add the dependency to your `pom.xml`.
 
-Just add the dependency to your pom.xml
+| For Maven coordinates and published artifacts, see [the package](https://github.com/Peidon/Jaluate/packages/3115718) |
+|----------------------------------------------------------------------------------------------------------------------|
 
-## Examples
+Requires **Java 11** or later.
 
-Create a new EvaluableExpression, then call "Eval" on it.
+## Quick Start
+
+Create an `EvaluableExpression` and call `Eval()` to execute it.
+
+### Boolean Expression
 
 ```java
 var expr = new EvaluableExpression("1 + 2 > 2.5");
 var result = expr.Eval();
-// result is now set to "true", the Boolean value.
+// result == true
 ```
 
-How about with parameters and some math?
+### Expressions with Parameters
 
 ```java
-var expr = new EvaluableExpression("(requests_made * requests_succeeded / 100) >= 90");
-Map<String, Object> params = Map.of("requests_made", 100, "requests_succeeded", 80);
+var expr = new EvaluableExpression(
+        "(requests_made * requests_succeeded / 100) >= 90"
+);
+
+Map<String, Object> params = Map.of(
+        "requests_made", 100,
+        "requests_succeeded", 80
+);
+
 var result = expr.Eval(params);
-// result is now set to "false", the Boolean value.
+// result == false
 ```
 
-Or maybe you want to check the status of an alive check ("smoke test") page, which will be a string?
+### String Comparison
 
 ```java
-var expr = new EvaluableExpression("http_response_body == \"service is ok\"");
-Map<String, Object> params = Map.of("http_response_body", "service is ok");
+var expr = new EvaluableExpression(
+        "http_response_body == \"service is ok\""
+);
+
+Map<String, Object> params = Map.of(
+        "http_response_body", "service is ok"
+);
+
 var result = expr.Eval(params);
-// result is now set to "true", the Boolean value.
+// result == true
 ```
 
-What if return numeric ones?
+### Numeric Calculation
 
 ```java
-var expr = new EvaluableExpression("100 * (mem_used / total_mem)");
-Map<String, Object> params = Map.of("total_mem",1024, "mem_used", 512);
+var expr = new EvaluableExpression(
+        "100 * (mem_used / total_mem)"
+);
+
+Map<String, Object> params = Map.of(
+        "total_mem", 1024,
+        "mem_used", 512
+);
+
 var result = expr.Eval(params);
-// result is now set to "50.0", the Double value.
+// result == 50.0
 ```
 
-What operators and types does it support?
---
+---
 
-* Modifiers: `+` `-` `/` `*`
-* Comparators: `>` `>=` `<` `<=` `==` `!=`
-* Logical ops: `||` `&&`
-* Numeric constants, as decimal fraction (`12345.678`), as decimal int (`123`)
-* String constants (double quotes: `"foobar"`)
-* Short bytes ASCII constants (single quotes: `'abc'`)
-* Long bytes Unicode constants (`'''hello world'''`, or `"""hello world"""`)
-* Boolean constants: `true` `false`
-* Null constants: `null`
-* Parenthesis to control order of evaluation `(` `)`
-* Arrays (anything separated by `,` within parenthesis: `[1, 2, 3]`)
-* Map (string as key, any type as value: `{'high' : 10, 'width' : 20.0}`)
-* Prefixes: `!` `-`
+## Supported Operators and Types
 
-Functions
---
+### Arithmetic Operators
 
-You may have cases where you want to call a function on a parameter during execution of the expression. 
-Perhaps you have a mathematical operation you want to perform, like `log` or `tan` or `sqrt`. 
-For cases like this, you can provide a map of functions which will then be used during expression execution. 
-For instance:
+| `+`      | `-`         | `*`            | `/`      | `%`    |
+|----------|-------------|----------------|----------|--------|
+| Addition | Subtraction | Multiplication | Division | Modulo |
+
+### Comparison Operators
+
+| `>`          | `>=`                  | `<`       | `<=`               | `==`  | `!=`      |
+|--------------|-----------------------|-----------|--------------------|-------|-----------|
+| Greater than | Greater than or equal | Less than | Less than or equal | Equal | Not equal |
+
+### Logical Operators
+
+| `&&`        | `\|\|`     |
+|-------------|------------|
+| Logical AND | Logical OR |
+
+### Prefix Operators
+
+| `!`         | `-`            |
+|-------------|----------------|
+| Logical NOT | Unary negative |
+
+### Supported Constants
+
+* Integer numbers: `123`
+* Decimal numbers: `12345.678`
+* Strings: `"hello world"`
+* ASCII byte strings: `'abc'`
+* Unicode byte strings: `'''hello world'''` or `"""hello world"""`
+* Boolean values: `true`, `false`
+* Null value: `null`
+
+### Collections
+
+#### Arrays
+
+Anything separated by `,` within parenthesis.
+
+```text
+[1, 2.0, 'a', "b", some_struct, f(), a+b]
+```
+
+#### Maps
+
+String as key, any type as value.
+
+```text
+{"height": 10, 'width': 20.0, 'content': {"data": """hello world ...""", 'summary': "abc..."}}
+```
+
+### Parentheses
+
+Use parentheses to control evaluation order:
+
+```text
+(1 + 2) * 3
+```
+
+---
+
+## Functions
+
+Jaluate supports custom function registration during expression evaluation.
+
+This allows users to embed domain-specific logic directly into expressions.
+
+For example:
 
 ```java
 import org.xpd.EvaluableExpression;
@@ -95,73 +173,126 @@ import org.xpd.operator.FunctionalOperator;
 import org.xpd.core.Constant;
 
 void main() {
+
     var functions = Map.of(
             "log", new FunctionalOperator<>(Math::log),
             "exp", new FunctionalOperator<>(Math::exp),
             "sqrt", new FunctionalOperator<>(Math::sqrt)
     );
-    // Globally initialize the functions for all expressions
+
+    // Register functions globally
     Constant.initfunctions(functions);
 
-    // Use functions in expressions
-    var expr = new EvaluableExpression("sqrt(4.0)");
-    var result = expr.Eval();
-    // result is now set to "2.0", the Double value.
-    var expr = new EvaluableExpression("log(exp(3.0))");
-    var result = expr.Eval();
-    // result is now set to "3.0", the Double value.
+    var expr1 = new EvaluableExpression("sqrt(4.0)");
+    var result1 = expr1.Eval();
+    // result1 == 2.0
+
+    var expr2 = new EvaluableExpression("log(exp(3.0))");
+    var result2 = expr2.Eval();
+    // result2 == 3.0
 }
 ```
 
-Functions can accept most 4 arguments (following the universal coding discipline), correctly handles nested functions, 
-and arguments can be of any type (even if none of this library's operators support evaluation of that type). 
-For instance, each of these usages of functions in an expression are valid 
-(assuming that the appropriate functions and parameters are given):
+Functions support:
+
+* Up to **4 arguments** ( following universal coding discipline )
+* Nested function calls
+* Parameters of any type
+
+Example:
 
 ```text
-"max(someValue, abs(anotherValue), 10 * lastValue, x1 + x2)"
+select_maximum(
+    someValue,
+    abs(anotherValue),
+    10 * lastValue,
+    x1 + x2
+)
 ```
 
-Accessors
---
+---
 
-If you have structs(map or object) in your parameters, you can access their fields in the usual way. 
-For instance, given a struct that has a field "bar", present in the parameters as `foo`, the following is valid:
+## Accessors
 
-	"foo.bar"
+Jaluate supports accessing fields from objects and maps using familiar dot notation.
 
-Assuming `foo` has a field called "Size":
+If `foo` contains a field called `Size`:
 
-	"foo.Size > 9000"
+```text
+foo.Size > 9000
+```
 
-Accessors can be nested to any depth, like the following:
+Nested accessors are fully supported:
 
-	"foo.Bar.Baz.Length"
+```text
+foo.Bar.Baz.Length
+```
 
-Assuming `foo.bar.Baz` is an `array` or a `slice`:
+Array indexing is also supported:
 
-	"foo.bar.Baz[0]"
+```text
+foo.bar.Baz[0]
+```
 
-You can access the element with an index parameter, Assuming `idx` is an integer:
+Index expressions are allowed:
 
-    "foo.bar.Baz[idx]"
+```text
+foo.bar.Baz[idx]
+```
 
-It will return error when the field not exists or index out of range.
+The evaluator returns an error when:
 
-Escaping characters
---
+* the field does not exist
+* the index is out of bounds
 
-Sometimes you'll have parameters that have spaces, slashes, pluses, ampersands or some other character
-that this library interprets as something special. For example, the following expression will not
-act as one might expect:
+---
 
-	"response.time < 100"
+## Escaping Variable Names
 
-As written, the library will parse it as "[response] dot [time] is less than 100". In reality,
-"response.time" is meant to be one variable that just happens to have a dot in it.
+Sometimes variable names contain characters that are normally interpreted as operators or accessors.
 
-There are two ways to work around this. First, you can escape the entire parameter name:
+For example:
 
- 	"${response.time} < 100"
+```text
+response.time < 100
+```
 
-Or you can give one more parameter named "response" which is a struct has field "time".
+By default, this expression is interpreted as:
+
+```text
+response.time
+```
+
+meaning:
+
+```text
+response -> field time
+```
+
+However, if `response.time` is actually a single variable name, you can escape it using `${}` syntax:
+
+```text
+${response.time} < 100
+```
+
+Alternatively, you can pass a parameter called `response` containing a field named `time`.
+
+---
+
+## Use Cases
+
+Jaluate is particularly suitable for:
+
+* Business rule engines
+* Workflow orchestration
+* Dynamic configuration systems
+* Feature flags
+* Alerting and monitoring systems
+* Decision engines
+* Domain Specific Languages (DSLs)
+
+---
+
+## License
+
+Please refer to the project repository for licensing information.
