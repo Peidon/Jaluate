@@ -23,7 +23,6 @@ A lightweight and extensible expression evaluator, supporting function orchestra
 
 <!-- Parallel execution of operators and functions is planned for future releases. -->
 
----
 
 ## Installation
 
@@ -93,7 +92,6 @@ var result = expr.Eval(params);
 // result == 50.0
 ```
 
----
 
 ## Supported Operators and Types
 
@@ -157,7 +155,6 @@ Use parentheses to control evaluation order:
 (1 + 2) * 3
 ```
 
----
 
 ## Functions
 
@@ -210,7 +207,6 @@ select_maximum(
 )
 ```
 
----
 
 ## Accessors
 
@@ -245,7 +241,6 @@ The evaluator returns an error when:
 * the field does not exist
 * the index is out of bounds
 
----
 
 ## Escaping Variable Names
 
@@ -277,7 +272,6 @@ ${response.time} < 100
 
 Alternatively, you can pass a parameter called `response` containing a field named `time`.
 
----
 
 ## Use Cases
 
@@ -291,7 +285,6 @@ Jaluate is particularly suitable for:
 * Decision engines
 * Domain Specific Languages (DSLs)
 
----
 
 ## License
 
